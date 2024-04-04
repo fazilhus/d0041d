@@ -1,50 +1,34 @@
-#include <chrono>
 #include <iostream>
-#include <random>
-#include <bits/ranges_algo.h>
+#include <iomanip>
 
 #include "src/sort.h"
+#include "src/algo.h"
 
-std::list<int> rfilled(std::size_t n = 1000) {
-    auto l = std::list<int>();
-
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<int> dist(1, 100);
-    for (std::size_t i = 0; i < n; ++i) {
-        l.push_back(dist(rng));
-    }
-
-    return l;
-}
-
-void test() {
-    int pow = 10000;
-    auto l1 = rfilled(pow);
-    auto start1 = std::chrono::high_resolution_clock::now();
-    insert_sort(l1);
-    auto dur1 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start1);
-
-    auto l2 = rfilled(pow);
-    auto start2 = std::chrono::high_resolution_clock::now();
-    bSort(l2);
-    auto dur2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start2);
-
-    auto l3 = rfilled(pow);
-    auto start3 = std::chrono::high_resolution_clock::now();
-    l3.sort();
-    auto dur3 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start3);
-
-    std::cout << "Insert sort: " << dur1 << '\n';
-    std::cout << "bSort: " << dur2 << '\n';
-    std::cout << "Quick sort: " << dur3 << '\n';
-}
 
 int main() {
-    // auto l = std::list<int>{6, 1, 7, 2, 8, 3, 9, 4, 10, 5};
-    // std::cout << l << '\n';
-    // insert_sort(l);
-    // std::cout << "Sorted: " << l << '\n';
-    test();
+    std::vector<std::vector<int>> matrix = {
+        { 1, 2, -1, -4, -20, 1 }, 
+        { -8, -3, 4, 2, 1, -3 }, 
+        { 3, 8, 10, 1, 3, 0 }, 
+        { -4, -1, 1, 7, -6, -4 },
+        { 0, 3, -30, 0, -3, -1 },
+    };
+    for (std::size_t i = 0; i < matrix.size(); ++i) {
+        for (std::size_t j = 0; j < matrix[0].size(); ++j) {
+            std::cout << std::setw(4) << matrix[i][j];
+        }
+        std::cout << '\n';
+    }
+    std::cout << '\n';
+    
+    auto ans = submatrix_max_sum(matrix);
+    for (std::size_t i = ans.i; i <= ans.i + ans.n; ++i) {
+        for (std::size_t j = ans.j; j <= ans.j + ans.m; ++j) {
+            std::cout << std::setw(4) << matrix[i][j];
+        }
+        std::cout << '\n';
+    }
+
+    std::cin.get();
     return 0;
 }

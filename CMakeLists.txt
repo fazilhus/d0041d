@@ -3,7 +3,14 @@ project(main)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(main main.cpp
+add_executable(main
+        main.cpp
         src/sort.h
         src/heap.h
+)
+
+add_executable(test 
+        test/test.cpp
+        test/algo_test.h
+        test/sort_test.h
 )

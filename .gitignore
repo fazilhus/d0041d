@@ -10,4 +10,8 @@
 /cmake-build-debug/
 /cmake-build-release/
 /cmake-build-release-event-trace/
+/build/
+
+
 /.idea/
+/.vscode/
