@@ -21,7 +21,7 @@ std::list<int> rfilled(std::size_t n = 1000) {
 }
 
 void test_insert_sort() {
-    int pow = 10000;
+    int pow = 20000;
     auto l1 = rfilled(pow);
     auto start1 = std::chrono::high_resolution_clock::now();
     insert_sort(l1);
