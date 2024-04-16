@@ -20,6 +20,10 @@ void test_sliding_window() {
     }
 
     std::cout << "Sub-Array max sum test 1 " << (flag ? "finished successfully" : "failed" ) << '\n';
+
+    v = {-2, -2, 11, -4, 1, 6, -7, 8, -9, 1};
+    auto res = subarray_max_sum(v, 0, v.size() - 1);
+    std::cout << "Sub-Array max sum test 2 " << (res == 11 ? "finished successfully" : "failed" ) << "\n\tres = " << res << '\n';
 }
 
 void test1_submatrix_max_sum() {
@@ -31,7 +35,7 @@ void test1_submatrix_max_sum() {
     };
     
     auto ans = submatrix_max_sum(matrix);
-    auto correct = Answer{1, 2, 0, 1, 15};
+    auto correct = MatrixMask{1, 2, 0, 1, 15};
     std::cout << "Sub-Matrix max sum test 1 " << (ans == correct ? "finished successfully" : "failed" ) << '\n';
 }
 
@@ -45,7 +49,7 @@ void test2_submatrix_max_sum() {
     }; 
     
     auto ans = submatrix_max_sum(matrix);
-    auto correct = Answer{1, 2, 1, 2, 29};
+    auto correct = MatrixMask{1, 2, 1, 2, 29};
     std::cout << "Sub-Matrix max sum test 2 " << (ans == correct ? "finished successfully" : "failed" ) << '\n';
 }
 

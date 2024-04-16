@@ -20,24 +20,116 @@ std::list<int> rfilled(std::size_t n = 1000) {
     return l;
 }
 
-void test_insert_sort() {
-    int pow = 20000;
-    auto l1 = rfilled(pow);
-    auto start1 = std::chrono::high_resolution_clock::now();
-    insert_sort(l1);
-    auto dur1 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start1);
+void test_insert_sort_random() {
+    std::cout << "Random\n";
+    std::size_t size = 10000;
+    {
+        auto l = rfilled(size);
+        auto start = std::chrono::high_resolution_clock::now();
+        l.sort();
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "QuickSort" << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
 
-    auto l2 = rfilled(pow);
-    auto start2 = std::chrono::high_resolution_clock::now();
-    bSort(l2);
-    auto dur2 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start2);
+    {
+        auto l = rfilled(size);
+        auto start = std::chrono::high_resolution_clock::now();
+        insert_sort(l);
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "Insert Sort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
 
-    auto l3 = rfilled(pow);
-    auto start3 = std::chrono::high_resolution_clock::now();
-    l3.sort();
-    auto dur3 = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start3);
+    {
+        auto l = rfilled(size);
+        auto start = std::chrono::high_resolution_clock::now();
+        bSort(l);
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "bSort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
+}
 
-    std::cout << "Insert sort: " << dur1.count() << '\n';
-    std::cout << "bSort: " << dur2.count() << '\n';
-    std::cout << "Quick sort: " << dur3.count() << '\n';
+void test_insert_sort_almost_sorted() {
+    std::cout << "Almost Sorted\n";
+    std::size_t size = 10000;
+    {
+        std::list<int> l = rfilled(size);
+        l.sort();
+        auto pos = std::next(l.begin(), size / 2);
+        l.insert(pos, *l.begin());
+        l.erase(l.begin());
+
+        auto start = std::chrono::high_resolution_clock::now();
+        l.sort();
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "QuickSort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
+
+    {
+        std::list<int> l = rfilled(size);
+        l.sort();
+        auto pos = std::next(l.begin(), size / 2);
+        l.insert(pos, *l.begin());
+        l.erase(l.begin());
+
+        auto start = std::chrono::high_resolution_clock::now();
+        insert_sort(l);
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "Insertion Sort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
+
+    {
+        std::list<int> l = rfilled(size);
+        l.sort();
+        auto pos = std::next(l.begin(), size / 2);
+        l.insert(pos, *l.begin());
+        l.erase(l.begin());
+
+        auto start = std::chrono::high_resolution_clock::now();
+        bSort(l);
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "bSort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
+}
+
+void test_insert_sort_sorted() {
+    std::cout << "Sorted\n";
+    std::size_t size = 10000;
+    {
+        std::list<int> l = rfilled(size);
+        l.sort();
+
+        auto start = std::chrono::high_resolution_clock::now();
+        l.sort();
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "QuickSort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
+
+    {
+        std::list<int> l = rfilled(size);
+        l.sort();
+
+        auto start = std::chrono::high_resolution_clock::now();
+        insert_sort(l);
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "Insertion Sort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
+
+    {
+        std::list<int> l = rfilled(size);
+        l.sort();
+        
+        auto start = std::chrono::high_resolution_clock::now();
+        bSort(l);
+        auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
+        std::cout << "bSort " << ": " << (double)dur.count() / 1000000000 << "s\n";
+    }
+    std::cout << '\n';
 }

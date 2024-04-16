@@ -3,11 +3,11 @@
 #include <iostream>
 #include <vector>
 
-struct Answer {
+struct MatrixMask {
     std::size_t i, n, j, m;
     int sum;
 
-    bool operator==(const Answer& other) const {
+    bool operator==(const MatrixMask& other) const {
         return i == other.i &&
             j == other.j &&
             n == other.n &&
@@ -16,7 +16,7 @@ struct Answer {
     }
 };
 
-std::ostream& operator<<(std::ostream& os, const Answer& ans) {
+std::ostream& operator<<(std::ostream& os, const MatrixMask& ans) {
         os << "Sum " << ans.sum << '\n';
         os << "\t i from " << ans.i << " for " << ans.n << '\n';
         os << "\t j from " << ans.j << " for " << ans.m << '\n';
@@ -49,8 +49,8 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum(const std::vector<int
     return {max, max_start, end};
 }
 
-Answer submatrix_max_sum(const std::vector<std::vector<int>>& mat) {
-    Answer res{ 0, 0, 0, 0, INT_MIN };
+MatrixMask submatrix_max_sum(const std::vector<std::vector<int>>& mat) {
+    MatrixMask res{ 0, 0, 0, 0, INT_MIN };
     auto n = mat.size();
     auto m = mat[0].size();
 
@@ -85,4 +85,19 @@ Answer submatrix_max_sum(const std::vector<std::vector<int>>& mat) {
     }
 
     return res;
+}
+
+int subarray_max_sum(const std::vector<int>& v, std::size_t start, std::size_t end) {
+    if (end - start == 0)
+        return v[start];
+    if (end - start == 1)
+        return std::max({v[start], v[end], v[start] + v[end]});
+
+    auto left = subarray_max_sum(v, start, (start + end) / 2);
+    auto right = subarray_max_sum(v, (start + end) / 2 + 1, end);
+    for (std::size_t i = start; i <= end; ++i) {
+        std::cout << v[i] << ' ';
+    }
+    std::cout << "\n\t left: " << left << " right: " << right << " sum: " << left + right << '\n';
+    return std::max({left, right, left + right});
 }
