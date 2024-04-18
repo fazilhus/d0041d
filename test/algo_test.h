@@ -2,7 +2,8 @@
 
 #include <iostream>
 #include <vector>
-#include <cassert>
+#include <chrono>
+#include <random>
 
 #include "../src/algo.h"
 
@@ -53,8 +54,80 @@ void test2_submatrix_max_sum() {
     std::cout << "Sub-Matrix max sum test 2 " << (ans == correct ? "finished successfully" : "failed" ) << '\n';
 }
 
+std::string create_palindromes(std::size_t length) {
+    std::string res{};
+    std::stack<char> st{};
+
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<int> dist(97, 97 + 26);
+
+    for (std::size_t i = 0; i < length / 2; ++i) {
+        char c = 'a' + dist(rng);
+        res.push_back(c);
+        st.push(c);
+    }
+
+    while (!st.empty()) {
+        res.push_back(st.top());
+        st.pop();
+    }
+
+    return res;
+}
+
+void test_palindrome() {
+    std::vector<std::string> input{
+        "Anna",
+        "rosor",
+        "Du har bra hud",
+        create_palindromes(100),
+        create_palindromes(1000),
+        create_palindromes(10000),
+        create_palindromes(100000),
+        create_palindromes(1000000),
+        create_palindromes(10000000),
+        create_palindromes(100000000),
+        create_palindromes(1000000000),
+    };
+
+    std::cout << "\nInplace\n";
+    for (const auto& s : input) {
+        auto start = std::chrono::high_resolution_clock::now();
+        auto res = is_palindrome_a(s);
+        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+        std::cout << "Is " << (res ? "a " : "not a ") << "palindrome\n";
+        std::cout << "Length " << s.size() << ", Took " << dur << "ms\n";
+    }
+
+    std::cout << "\nStack\n";
+    for (const auto& s : input) {
+        auto start = std::chrono::high_resolution_clock::now();
+        auto res = is_palindrome_b(s);
+        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+        std::cout << "Is " << (res ? "a " : "not a ") << "palindrome\n";
+        std::cout << "Length " << s.size() << ", Took " << dur << "ms\n";
+    }
+
+    std::cout << "\nQueue\n";
+    for (const auto& s : input) {
+        auto start = std::chrono::high_resolution_clock::now();
+        auto res = is_palindrome_c(s);
+        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+        std::cout << "Is " << (res ? "a " : "not a ") << "palindrome\n";
+        std::cout << "Length " << s.size() << ", Took " << dur << "ms\n";
+    }
+
+    std::cout << "\nStack + Queue\n";
+    for (const auto& s : input) {
+        auto start = std::chrono::high_resolution_clock::now();
+        auto res = is_palindrome_d(s);
+        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+        std::cout << "Is " << (res ? "a " : "not a ") << "palindrome\n";
+        std::cout << "Length " << s.size() << ", Took " << dur << "ms\n";
+    }
+}
+
 void algo_test_all() {
-    test_sliding_window();
-    test1_submatrix_max_sum();
-    test2_submatrix_max_sum();
+    test_palindrome();
 }

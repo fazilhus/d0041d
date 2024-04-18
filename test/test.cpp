@@ -7,7 +7,5 @@
 //#include "hashtable_test.h"
 
 int main() {
-    test_insert_sort_random();
-    test_insert_sort_almost_sorted();
-    test_insert_sort_sorted();
+    algo_test_all();
 }

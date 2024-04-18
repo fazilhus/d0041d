@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <queue>
+#include <string>
 
 struct MatrixMask {
     std::size_t i, n, j, m;
@@ -87,6 +90,7 @@ MatrixMask submatrix_max_sum(const std::vector<std::vector<int>>& mat) {
     return res;
 }
 
+// wrong right now
 int subarray_max_sum(const std::vector<int>& v, std::size_t start, std::size_t end) {
     if (end - start == 0)
         return v[start];
@@ -100,4 +104,85 @@ int subarray_max_sum(const std::vector<int>& v, std::size_t start, std::size_t e
     }
     std::cout << "\n\t left: " << left << " right: " << right << " sum: " << left + right << '\n';
     return std::max({left, right, left + right});
+}
+
+
+// inplace
+bool is_palindrome_a(const std::string& s) {
+    for (std::size_t l = 0, r = s.size() - 1; l <= r; ++l, --r) {
+        if (std::isspace(s[l]) || std::ispunct(s[l])) ++l;
+        if (std::isspace(s[r]) || std::ispunct(s[r])) --r;
+
+        if (std::tolower(s[l]) != std::tolower(s[r])) return false;
+    }
+    return true;
+}
+
+// stack
+bool is_palindrome_b(const std::string& s) {
+    std::stack<char> st{};
+    auto ss = s;
+    std::erase_if(ss, [](char c) { return std::isspace(c) || std::ispunct(c); });
+
+    std::size_t i = 0;
+    for (; i < ss.size() / 2; ++i) {
+        st.push(std::tolower(ss[i]));
+    }
+
+    if (ss.size() % 2 == 1) ++i;
+
+    for (; i < ss.size(); ++i) {
+        if (st.top() != std::tolower(ss[i])) return false;
+        st.pop();
+    }
+
+    return st.empty();
+}
+
+// queue
+bool is_palindrome_c(const std::string& s) {
+    std::queue<char> q{};
+    auto ss = s;
+    std::erase_if(ss, [](char c) { return std::isspace(c) || std::ispunct(c); });
+
+    std::size_t i = 0;
+    std::size_t middle = ss.size() / 2;
+    for (; i < middle; ++i) {
+        q.push(std::tolower(ss[i]));
+    }
+
+    if (ss.size() % 2 == 1) ++middle;
+
+    for (i = ss.size() - 1; i >= middle; --i) {
+        if (q.front() != std::tolower(ss[i])) return false;
+        q.pop();
+    }
+
+    return q.empty();
+}
+
+// stack + queue
+bool is_palindrome_d(const std::string& s) {
+    std::stack<char> st{};
+    std::queue<char> q{};
+    auto ss = s;
+    std::erase_if(ss, [](char c) { return std::isspace(c) || std::ispunct(c); });
+
+    std::size_t i = 0;
+    std::size_t middle = ss.size() / 2;
+    for (; i < middle; ++i) {
+        st.push(std::tolower(ss[i]));
+        q.push(std::tolower(ss[middle + (ss.size() % 2) + i]));
+    }
+
+    if (ss.size() % 2 == 1) ++middle;
+
+    while (!st.empty() && !q.empty()) {
+        if (st.top() != q.front()) return false;
+
+        st.pop();
+        q.pop();
+    }
+
+    return st.empty() && q.empty();
 }
