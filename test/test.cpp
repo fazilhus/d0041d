@@ -8,4 +8,5 @@
 
 int main() {
     algo_test_all();
+    //test_subsequence_max_sum();
 }

@@ -7,7 +7,7 @@
 
 #include "../src/sort.h"
 
-std::list<int> rfilled(std::size_t n = 1000) {
+std::list<int> rfilled_list(std::size_t n = 1000) {
     auto l = std::list<int>();
 
     std::random_device dev;
@@ -24,7 +24,7 @@ void test_insert_sort_random() {
     std::cout << "Random\n";
     std::size_t size = 10000;
     {
-        auto l = rfilled(size);
+        auto l = rfilled_list(size);
         auto start = std::chrono::high_resolution_clock::now();
         l.sort();
         auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
@@ -33,7 +33,7 @@ void test_insert_sort_random() {
     std::cout << '\n';
 
     {
-        auto l = rfilled(size);
+        auto l = rfilled_list(size);
         auto start = std::chrono::high_resolution_clock::now();
         insert_sort(l);
         auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
@@ -42,7 +42,7 @@ void test_insert_sort_random() {
     std::cout << '\n';
 
     {
-        auto l = rfilled(size);
+        auto l = rfilled_list(size);
         auto start = std::chrono::high_resolution_clock::now();
         bSort(l);
         auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start);
@@ -55,7 +55,7 @@ void test_insert_sort_almost_sorted() {
     std::cout << "Almost Sorted\n";
     std::size_t size = 10000;
     {
-        std::list<int> l = rfilled(size);
+        std::list<int> l = rfilled_list(size);
         l.sort();
         auto pos = std::next(l.begin(), size / 2);
         l.insert(pos, *l.begin());
@@ -69,7 +69,7 @@ void test_insert_sort_almost_sorted() {
     std::cout << '\n';
 
     {
-        std::list<int> l = rfilled(size);
+        std::list<int> l = rfilled_list(size);
         l.sort();
         auto pos = std::next(l.begin(), size / 2);
         l.insert(pos, *l.begin());
@@ -83,7 +83,7 @@ void test_insert_sort_almost_sorted() {
     std::cout << '\n';
 
     {
-        std::list<int> l = rfilled(size);
+        std::list<int> l = rfilled_list(size);
         l.sort();
         auto pos = std::next(l.begin(), size / 2);
         l.insert(pos, *l.begin());
@@ -101,7 +101,7 @@ void test_insert_sort_sorted() {
     std::cout << "Sorted\n";
     std::size_t size = 10000;
     {
-        std::list<int> l = rfilled(size);
+        std::list<int> l = rfilled_list(size);
         l.sort();
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -112,7 +112,7 @@ void test_insert_sort_sorted() {
     std::cout << '\n';
 
     {
-        std::list<int> l = rfilled(size);
+        std::list<int> l = rfilled_list(size);
         l.sort();
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -123,7 +123,7 @@ void test_insert_sort_sorted() {
     std::cout << '\n';
 
     {
-        std::list<int> l = rfilled(size);
+        std::list<int> l = rfilled_list(size);
         l.sort();
         
         auto start = std::chrono::high_resolution_clock::now();
