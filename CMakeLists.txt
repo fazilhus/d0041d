@@ -7,10 +7,12 @@ add_executable(main
         main.cpp
         src/sort.h
         src/heap.h
+        src/queue.h
 )
 
 add_executable(test 
         test/test.cpp
         test/algo_test.h
         test/sort_test.h
+        test/queue_test.h
 )

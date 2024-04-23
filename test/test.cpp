@@ -4,9 +4,11 @@
 
 #include "algo_test.h"
 #include "sort_test.h"
+#include "queue_test.h"
 //#include "hashtable_test.h"
 
 int main() {
-    algo_test_all();
+    //algo_test_all();
     //test_subsequence_max_sum();
+    test_max_queue();
 }
