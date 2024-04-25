@@ -35,7 +35,7 @@ public:
         q.pop();
         return res;
     }
-пуш
+
     T max() const {
         return dq.front();
     }

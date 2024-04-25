@@ -8,6 +8,7 @@ add_executable(main
         src/sort.h
         src/heap.h
         src/queue.h
+        src/segment_tree.h
 )
 
 add_executable(test 
@@ -15,4 +16,5 @@ add_executable(test
         test/algo_test.h
         test/sort_test.h
         test/queue_test.h
+        test/test_segment_tree.h
 )

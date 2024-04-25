@@ -107,20 +107,81 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum_b(const std::vector<i
     return {max, max_start, end};
 }
 
-// divide and conquer
-int subarray_max_sum_c(const std::vector<int>& v, std::size_t start, std::size_t end) {
-    if (end - start == 0)
-        return v[start];
-    if (end - start == 1)
-        return std::max({v[start], v[end], v[start] + v[end]});
+std::tuple<int, std::size_t, std::size_t> max_prefix(const std::vector<int>& v, std::size_t l, std::size_t r) {
+    if (l + 1 == r) return v[l] + v[r] > v[l] ? std::make_tuple(v[l] + v[r], l, r) : std::make_tuple(v[l], l, l);
 
-    auto left = subarray_max_sum_c(v, start, (start + end) / 2);
-    auto right = subarray_max_sum_c(v, (start + end) / 2 + 1, end);
-    for (std::size_t i = start; i <= end; ++i) {
-        std::cout << v[i] << ' ';
+    std::size_t m = (l + r) / 2;
+    auto [ls, ll, lr] = max_prefix(v, l, m);
+    auto [rs, rl, rr] = max_prefix(v, m + 1, r);
+
+    int sum = 0;
+    for (auto i = ll; i <= rr; ++i) sum += v[i];
+    return sum > ls ? std::make_tuple(sum, ll, rr) : std::make_tuple(ls, ll, lr);
+}
+
+std::tuple<int, std::size_t, std::size_t> max_postfix(const std::vector<int>& v, std::size_t l, std::size_t r) {
+    if (l + 1 == r) return v[l] + v[r] > v[r] ? std::make_tuple(v[l] + v[r], l, r) : std::make_tuple(v[r], r, r);
+
+    std::size_t m = (l + r) / 2;
+    auto [ls, ll, lr] = max_postfix(v, l, m);
+    auto [rs, rl, rr] = max_postfix(v, m + 1, r);
+
+    int sum = 0;
+    for (auto i = ll; i <= rr; ++i) sum += v[i];
+    return sum > rs ? std::make_tuple(sum, ll, rr) : std::make_tuple(rs, rl, rr);
+}
+
+// divide and conquer
+std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<int>& v, std::size_t l, std::size_t r, std::size_t c) {
+    if (l + 1 == r) return v[l] + v[r] >= v[l] && v[l] + v[r] >= v[r] ? std::make_tuple(v[l] + v[r], l, r) : (v[l] > v[r] ? std::make_tuple(v[l], l, l) : std::make_tuple(v[r], r, r));
+
+    std::size_t m = (l + r) / 2;
+    //std::cout << c << ' ' << l << ' ' << m << ' ' << r << '\n';
+    auto [ls, ll, lr] = subarray_max_sum_c1(v, l, m, c + 1);
+    auto [pos, pol, por] = max_postfix(v, l, m);
+    auto [rs, rl, rr] = subarray_max_sum_c1(v, m + 1, r, c + 1);
+    auto [prs, prl, prr] = max_prefix(v, m + 1, r);
+
+    int sum_l = 0;
+    std::size_t sum_ll = 0, sum_lr = 0;
+    if (ll == pol) {
+        sum_l = pos;
+        sum_ll = pol;
+        sum_lr = por;
     }
-    std::cout << "\n\t left: " << left << " right: " << right << " sum: " << left + right << '\n';
-    return std::max({left, right, left + right});
+    else {
+        for (auto i = ll; i <= por; ++i) sum_l += v[i];
+        sum_ll = ll;
+        sum_lr = por;
+    }
+    
+    int sum_r = 0;
+    std::size_t sum_rl = 0, sum_rr = 0;
+    if (rr == prr) {
+        sum_r = prs;
+        sum_rl = prl;
+        sum_rr = prr;
+    }
+    else {
+        for (auto i = prl; i <= rr; ++i) sum_r += v[i];
+        sum_rl = prl;
+        sum_rr = rr;
+    }
+
+    int sum = 0;
+    for (auto i = ll; i <= rr; ++i) sum += v[i];
+
+    //std::cout << c << "  l  " << ls << ' ' << ll << ' ' << lr << "  pos  " << pos << ' ' << pol << ' ' << por << "  r  " << rs << ' ' << rl << ' ' << rr << "  prs  " << prs << ' ' << prl << ' ' << prr << "  sum  " << sum << ' ' << ll << ' ' << rr << '\n';
+    int max = std::max({ls, sum_l, rs, sum_r, pos + prs, pos + sum_r, sum_l + prs, sum});
+    if (sum == max) return {sum, ll, rr};
+    if (sum_l == max) return {sum_l, sum_ll, sum_lr};
+    if (sum_r == max) return {sum_r, sum_rl, sum_rr};
+    if (pos + prs == max) return {pos + prs, pol, prr};
+    if (sum_l + prs == max) return {sum_l + prs, sum_ll, prr};
+    if (sum_r + pos == max) return {sum_r + pos, pol, sum_rr};
+    if (ls == max) return {ls, ll, lr};
+    // rs == max
+    return {rs, rl, rr};
 }
 
 MatrixMask submatrix_max_sum(const std::vector<std::vector<int>>& mat) {
