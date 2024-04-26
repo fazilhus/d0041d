@@ -48,56 +48,56 @@ void test_subsequence_max_sum() {
         //std::cout << input.back() << '\n';
     }
 
-    // for (int i = 0; i < 1000; ++i) {
-    //     auto v = rfilled_vector(8);
-    //     auto [sumk, _k1, _k2] = subarray_max_sum_b(v);
-    //     auto [sumdnc, _dnc1, _dnc2] = subarray_max_sum_c1(v, 0, 7, 0);
-    //     if (sumk != sumdnc) {
-    //         std::cout << v << ' ' << sumk << ' ' << sumdnc << '\n';
-    //         break;
-    //     }
+    for (int i = 0; i < 10000; ++i) {
+        auto v = rfilled_vector(32);
+        auto [sumk, _k1, _k2] = subarray_max_sum_b(v);
+        auto [sumdnc, _dnc1, _dnc2] = subarray_max_sum_c1(v, 0, 31, 0);
+        if (sumk != sumdnc) {
+            std::cout << v << ' ' << sumk << ' ' << sumdnc << '\n';
+            break;
+        }
+    }
+
+    // std::cout << "\nKadane's\n";
+    // for (const auto& v : input) {
+    //     auto start = std::chrono::high_resolution_clock::now();
+    //     auto [sum, _1, _2] = subarray_max_sum_b(v);
+    //     auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+    //     std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
     // }
 
-    std::cout << "\nKadane's\n";
-    for (const auto& v : input) {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto [sum, _1, _2] = subarray_max_sum_b(v);
-        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
-        std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
-    }
+    // std::cout << "\nDivide and Conquer\n";
+    // for (const auto& v : input) {
+    //     auto start = std::chrono::high_resolution_clock::now();
+    //     auto [sum, _1, _2] = subarray_max_sum_c1(v, 0, v.size() - 1, 0);
+    //     auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+    //     std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
+    // }
 
-    std::cout << "\nDivide and Conquer\n";
-    for (const auto& v : input) {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto [sum, _1, _2] = subarray_max_sum_c1(v, 0, v.size() - 1, 0);
-        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
-        std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
-    }
+    // std::cout << "\nDivide and Conquer (precalculated sums using segment tree)\n";
+    // for (const auto& v : input) {
+    //     auto start = std::chrono::high_resolution_clock::now();
+    //     segment_tree sg{v};
+    //     auto sum = sg.subarray_max_sum_c2();
+    //     auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+    //     std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
+    // }
 
-    std::cout << "\nDivide and Conquer (precalculated sums using segment tree)\n";
-    for (const auto& v : input) {
-        auto start = std::chrono::high_resolution_clock::now();
-        segment_tree sg{v};
-        auto sum = sg.subarray_max_sum_c2();
-        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
-        std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
-    }
-
-    std::cout << "\nSliding Window\n";
-    for (const auto& v : input) {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto [sum, _1, _2] = subarray_max_sum_a1(v);
-        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
-        std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
-    }
+    // std::cout << "\nSliding Window\n";
+    // for (const auto& v : input) {
+    //     auto start = std::chrono::high_resolution_clock::now();
+    //     auto [sum, _1, _2] = subarray_max_sum_a1(v);
+    //     auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+    //     std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
+    // }
     
-    std::cout << "\nSliding Window (accumulated sum)\n";
-    for (const auto& v : input) {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto [sum, _1, _2] = subarray_max_sum_a2(v);
-        auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
-        std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
-    }
+    // std::cout << "\nSliding Window (accumulated sum)\n";
+    // for (const auto& v : input) {
+    //     auto start = std::chrono::high_resolution_clock::now();
+    //     auto [sum, _1, _2] = subarray_max_sum_a2(v);
+    //     auto dur = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - start).count() / 1000000;
+    //     std::cout << "Result: " << sum << ", Took " << dur << "ms\n";
+    // }
 }
 
 void test1_submatrix_max_sum() {

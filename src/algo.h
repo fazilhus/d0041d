@@ -110,8 +110,11 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum_b(const std::vector<i
 std::tuple<int, std::size_t, std::size_t> max_prefix(const std::vector<int>& v, std::size_t l, std::size_t r) {
     if (l + 1 == r) return v[l] + v[r] > v[l] ? std::make_tuple(v[l] + v[r], l, r) : std::make_tuple(v[l], l, l);
 
+    // middle of the segment
     std::size_t m = (l + r) / 2;
+    // prefix of the left segment
     auto [ls, ll, lr] = max_prefix(v, l, m);
+    // prefix of the right segment
     auto [rs, rl, rr] = max_prefix(v, m + 1, r);
 
     int sum = 0;
@@ -122,8 +125,11 @@ std::tuple<int, std::size_t, std::size_t> max_prefix(const std::vector<int>& v, 
 std::tuple<int, std::size_t, std::size_t> max_postfix(const std::vector<int>& v, std::size_t l, std::size_t r) {
     if (l + 1 == r) return v[l] + v[r] > v[r] ? std::make_tuple(v[l] + v[r], l, r) : std::make_tuple(v[r], r, r);
 
+    // middle of the segment
     std::size_t m = (l + r) / 2;
+    // postfix of the left segment
     auto [ls, ll, lr] = max_postfix(v, l, m);
+    // postfix of the right segment
     auto [rs, rl, rr] = max_postfix(v, m + 1, r);
 
     int sum = 0;
@@ -136,7 +142,6 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<
     if (l + 1 == r) return v[l] + v[r] >= v[l] && v[l] + v[r] >= v[r] ? std::make_tuple(v[l] + v[r], l, r) : (v[l] > v[r] ? std::make_tuple(v[l], l, l) : std::make_tuple(v[r], r, r));
 
     std::size_t m = (l + r) / 2;
-    //std::cout << c << ' ' << l << ' ' << m << ' ' << r << '\n';
     auto [ls, ll, lr] = subarray_max_sum_c1(v, l, m, c + 1);
     auto [pos, pol, por] = max_postfix(v, l, m);
     auto [rs, rl, rr] = subarray_max_sum_c1(v, m + 1, r, c + 1);
@@ -171,7 +176,6 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<
     int sum = 0;
     for (auto i = ll; i <= rr; ++i) sum += v[i];
 
-    //std::cout << c << "  l  " << ls << ' ' << ll << ' ' << lr << "  pos  " << pos << ' ' << pol << ' ' << por << "  r  " << rs << ' ' << rl << ' ' << rr << "  prs  " << prs << ' ' << prl << ' ' << prr << "  sum  " << sum << ' ' << ll << ' ' << rr << '\n';
     int max = std::max({ls, sum_l, rs, sum_r, pos + prs, pos + sum_r, sum_l + prs, sum});
     if (sum == max) return {sum, ll, rr};
     if (sum_l == max) return {sum_l, sum_ll, sum_lr};
