@@ -141,20 +141,28 @@ std::tuple<int, std::size_t, std::size_t> max_postfix(const std::vector<int>& v,
 std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<int>& v, std::size_t l, std::size_t r, std::size_t c) {
     if (l + 1 == r) return v[l] + v[r] >= v[l] && v[l] + v[r] >= v[r] ? std::make_tuple(v[l] + v[r], l, r) : (v[l] > v[r] ? std::make_tuple(v[l], l, l) : std::make_tuple(v[r], r, r));
 
+    // middle of the segment
     std::size_t m = (l + r) / 2;
+    // left segment's max subsequence
     auto [ls, ll, lr] = subarray_max_sum_c1(v, l, m, c + 1);
+    // left segment's max postfix
     auto [pos, pol, por] = max_postfix(v, l, m);
+    // right segment's max subsequence
     auto [rs, rl, rr] = subarray_max_sum_c1(v, m + 1, r, c + 1);
+    // right segment's max prefix
     auto [prs, prl, prr] = max_prefix(v, m + 1, r);
 
     int sum_l = 0;
     std::size_t sum_ll = 0, sum_lr = 0;
+    // combined sum of the left segment
     if (ll == pol) {
+        // if the left segment's max postfix contains the max subsequence
         sum_l = pos;
         sum_ll = pol;
         sum_lr = por;
     }
     else {
+        // if the left segment's max postfix and max subsequence do not overlap
         for (auto i = ll; i <= por; ++i) sum_l += v[i];
         sum_ll = ll;
         sum_lr = por;
@@ -162,30 +170,36 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<
     
     int sum_r = 0;
     std::size_t sum_rl = 0, sum_rr = 0;
+    // combined sum of the right segment
     if (rr == prr) {
+        // if the right segment's max prefix contains the max subsequence
         sum_r = prs;
         sum_rl = prl;
         sum_rr = prr;
     }
     else {
+        // if the right segment's max prefix and max subsequence do not overlap
         for (auto i = prl; i <= rr; ++i) sum_r += v[i];
         sum_rl = prl;
         sum_rr = rr;
     }
 
-    int sum = 0;
-    for (auto i = ll; i <= rr; ++i) sum += v[i];
+    /*
+    sum of the segment from start of the left segment's max subsequence to the
+    end of the right's max subsequence
+    */
+    int sum = sum_l + sum_r;
 
-    int max = std::max({ls, sum_l, rs, sum_r, pos + prs, pos + sum_r, sum_l + prs, sum});
-    if (sum == max) return {sum, ll, rr};
-    if (sum_l == max) return {sum_l, sum_ll, sum_lr};
-    if (sum_r == max) return {sum_r, sum_rl, sum_rr};
-    if (pos + prs == max) return {pos + prs, pol, prr};
-    if (sum_l + prs == max) return {sum_l + prs, sum_ll, prr};
-    if (sum_r + pos == max) return {sum_r + pos, pol, sum_rr};
-    if (ls == max) return {ls, ll, lr};
-    // rs == max
-    return {rs, rl, rr};
+    // finding the greatest segment
+    std::vector<std::tuple<int, std::size_t, std::size_t>> sums = {
+        {ls, ll, lr}, {rs, rl, rr}, {sum_l + prs, sum_ll, prr}, {sum_r + pos, pol, sum_rr},
+        {pos + prs, pol, prr}, {sum_r, sum_rl, sum_rr}, {sum_l, sum_ll, sum_lr}, {sum, ll, rr},
+    };
+    std::sort(sums.begin(), sums.end(), [](const std::tuple<int, std::size_t, std::size_t>& A, 
+        const std::tuple<int, std::size_t, std::size_t>& B){
+            return std::get<0>(A) > std::get<0>(B);});
+
+    return sums[0];
 }
 
 MatrixMask submatrix_max_sum(const std::vector<std::vector<int>>& mat) {
