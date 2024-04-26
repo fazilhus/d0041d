@@ -308,17 +308,20 @@ bool is_palindrome_c(const std::string& s) {
 bool is_palindrome_d(const std::string& s) {
     std::stack<char> st{};
     std::queue<char> q{};
-    auto ss = s;
-    std::erase_if(ss, [](char c) { return std::isspace(c) || std::ispunct(c); });
 
     std::size_t i = 0;
-    std::size_t middle = ss.size() / 2;
+    std::size_t middle = s.size() / 2;
     for (; i < middle; ++i) {
-        st.push(std::tolower(ss[i]));
-        q.push(std::tolower(ss[middle + (ss.size() % 2) + i]));
+        if (std::isspace(s[i]) || std::ispunct(s[i])) continue;
+        st.push(std::tolower(s[i]));
+    }
+    middle += s.size() % 2;
+    for (i = middle; i < s.size(); ++i) {
+        if (std::isspace(s[i]) || std::ispunct(s[i])) continue;
+        q.push(s[i]);
     }
 
-    if (ss.size() % 2 == 1) ++middle;
+    if (s.size() % 2 == 1) ++middle;
 
     while (!st.empty() && !q.empty()) {
         if (st.top() != q.front()) return false;

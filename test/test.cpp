@@ -9,8 +9,8 @@
 //#include "hashtable_test.h"
 
 int main() {
-    // algo_test_all();
-    test_subsequence_max_sum();
+    algo_test_all();
+    // test_subsequence_max_sum();
     // test_max_queue();
     // test_clt();
 }
