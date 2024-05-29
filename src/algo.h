@@ -107,6 +107,7 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum_b(const std::vector<i
     return {max, max_start, end};
 }
 
+// tuple contains the sum, it's beginning index and it's ending index
 std::tuple<int, std::size_t, std::size_t> max_prefix(const std::vector<int>& v, std::size_t l, std::size_t r) {
     if (l + 1 == r) return v[l] + v[r] > v[l] ? std::make_tuple(v[l] + v[r], l, r) : std::make_tuple(v[l], l, l);
 
@@ -118,10 +119,15 @@ std::tuple<int, std::size_t, std::size_t> max_prefix(const std::vector<int>& v, 
     auto [rs, rl, rr] = max_prefix(v, m + 1, r);
 
     int sum = 0;
+    /*
+    sum of the segment from start of the left segment's max prefix to the
+    end of the right's max prefix
+    */
     for (auto i = ll; i <= rr; ++i) sum += v[i];
     return sum > ls ? std::make_tuple(sum, ll, rr) : std::make_tuple(ls, ll, lr);
 }
 
+// tuple contains the sum, it's beginning index and it's ending index
 std::tuple<int, std::size_t, std::size_t> max_postfix(const std::vector<int>& v, std::size_t l, std::size_t r) {
     if (l + 1 == r) return v[l] + v[r] > v[r] ? std::make_tuple(v[l] + v[r], l, r) : std::make_tuple(v[r], r, r);
 
@@ -133,22 +139,27 @@ std::tuple<int, std::size_t, std::size_t> max_postfix(const std::vector<int>& v,
     auto [rs, rl, rr] = max_postfix(v, m + 1, r);
 
     int sum = 0;
+    /*
+    sum of the segment from start of the left segment's max postfix to the
+    end of the right's max postfix
+    */
     for (auto i = ll; i <= rr; ++i) sum += v[i];
     return sum > rs ? std::make_tuple(sum, ll, rr) : std::make_tuple(rs, rl, rr);
 }
 
 // divide and conquer
-std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<int>& v, std::size_t l, std::size_t r, std::size_t c) {
+// tuple contains the sum, it's beginning index and it's ending index
+std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<int>& v, std::size_t l, std::size_t r) {
     if (l + 1 == r) return v[l] + v[r] >= v[l] && v[l] + v[r] >= v[r] ? std::make_tuple(v[l] + v[r], l, r) : (v[l] > v[r] ? std::make_tuple(v[l], l, l) : std::make_tuple(v[r], r, r));
 
     // middle of the segment
     std::size_t m = (l + r) / 2;
     // left segment's max subsequence
-    auto [ls, ll, lr] = subarray_max_sum_c1(v, l, m, c + 1);
+    auto [ls, ll, lr] = subarray_max_sum_c1(v, l, m);
     // left segment's max postfix
     auto [pos, pol, por] = max_postfix(v, l, m);
     // right segment's max subsequence
-    auto [rs, rl, rr] = subarray_max_sum_c1(v, m + 1, r, c + 1);
+    auto [rs, rl, rr] = subarray_max_sum_c1(v, m + 1, r);
     // right segment's max prefix
     auto [prs, prl, prr] = max_prefix(v, m + 1, r);
 
@@ -200,6 +211,46 @@ std::tuple<int, std::size_t, std::size_t> subarray_max_sum_c1(const std::vector<
             return std::get<0>(A) > std::get<0>(B);});
 
     return sums[0];
+}
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int max(int a, int b, int c) {
+    return max(max(a, b), c);
+}
+
+int maxCrossingSum(const std::vector<int>& arr, int l, int m, int h) {
+    int sum = 0;
+    int left_sum = INT_MIN;
+    for (int i = m; i >= l; i--) {
+        sum += arr[i];
+        if (sum > left_sum)
+            left_sum = sum;
+    }
+
+    sum = 0;
+    int right_sum = INT_MIN;
+    for (int i = m + 1; i <= h; i++) {
+        sum += arr[i];
+        if (sum > right_sum)
+            right_sum = sum;
+    }
+
+    return max(left_sum + right_sum - arr[m], left_sum, right_sum);
+}
+
+int maxSubArraySum(const std::vector<int>& arr, int l, int h) {
+    if (l > h)
+        return INT_MIN;
+    if (l == h)
+        return arr[l];
+
+    int m = (l + h) / 2;
+    return max(maxSubArraySum(arr, l, m - 1),
+               maxSubArraySum(arr, m + 1, h),
+               maxCrossingSum(arr, l, m, h));
 }
 
 MatrixMask submatrix_max_sum(const std::vector<std::vector<int>>& mat) {
@@ -331,4 +382,102 @@ bool is_palindrome_d(const std::string& s) {
     }
 
     return st.empty() && q.empty();
+}
+
+// O(n^2)
+int pairs_impl(const std::vector<int>& v, std::size_t start, std::size_t end) {
+    auto m = start + (end - start) / 2;
+    if (m == start || m == end) {
+        return v[start] > v[end] ? 1 : 0;
+    }
+
+    int count = 0;
+    count += pairs_impl(v, start, m);
+    count += pairs_impl(v, m + 1, end);
+
+    for (std::size_t i = start; i <= m; ++i) {
+        for (std::size_t j = m + 1; j <= end; ++j) {
+            if (v[i] > v[j]) count++;
+        }
+    }
+    return count;
+}
+
+int pairs(const std::vector<int>& v) {
+    return pairs_impl(v, 0, v.size() - 1);
+}
+
+int merge(std::vector<int>& v, std::size_t l, std::size_t m, std::size_t r) {
+    std::vector<int> lsub{};
+    auto lb = m - l  + 1;
+    lsub.reserve(lb);
+    for (auto i = l; i <= m; ++i) {
+        lsub.push_back(v[i]);
+    }
+
+    std::vector<int> rsub{};
+    auto rb = r - m;
+    rsub.reserve(rb);
+    for (auto i = m + 1; i <= r; ++i) {
+        rsub.push_back(v[i]);
+    }
+
+    int count = 0, total = 0;
+    // for (std::size_t il = 0, ir = 0; (il < lb) && (ir < rb);) {
+    //     if (lsub[il] > rsub[ir]) {
+    //         count++;
+    //         ir++;
+    //     }
+    //     else {
+    //         total += count;
+    //         il++;
+    //     }
+    // }
+
+
+    std::size_t im = l, il = 0, ir = 0;
+    for (; (il < lb) && (ir < rb); ++im) {
+        //std::cout << "pair " << lsub[il] << ' ' << rsub[ir] << '\n';
+        if (lsub[il] <= rsub[ir]) {
+            v[im] = lsub[il];
+            il++;
+            total += count;
+        }
+        else {
+            v[im] = rsub[ir];
+            ir++;
+            count++;
+        }
+        //std::cout << "count " << total << ' ' << count << '\n';
+    }
+    
+    if (il < lb) total += count;
+    for (; il < lb; ++il, ++im) {
+        v[im] = lsub[il];
+    }
+
+    for (; ir < rb; ++ir, ++im) {
+        v[im] = rsub[ir];
+    }
+    return total;
+}
+
+int mergesort_and_count_impl(std::vector<int>& v, std::size_t l, std::size_t r) {
+    if (l >= r) return 0;
+
+    auto m = l + (r - l) / 2;
+    //std::cout << "indexes " << l << ' ' << m << ' ' << r << '\n';
+    int left_pair = mergesort_and_count_impl(v, l, m);
+    int right_pair = mergesort_and_count_impl(v, m + 1, r);
+    int combined = merge(v, l, m, r);
+    //std::cout << left_pair << ' ' << right_pair << ' ' << combined << '\n';
+    // for (auto i = l; i <= r; ++i) {
+    //     std::cout << v[i] << ' ';
+    // }
+    // std::cout << '\n';
+    return left_pair + right_pair + combined;
+}
+
+int mergesort_and_count(std::vector<int>& v) {
+    return mergesort_and_count_impl(v, 0, v.size() - 1);
 }

@@ -9,6 +9,7 @@ add_executable(main
         src/heap.h
         src/queue.h
         src/segment_tree.h
+        src/tree.h
 )
 
 add_executable(test 
@@ -17,4 +18,5 @@ add_executable(test
         test/sort_test.h
         test/queue_test.h
         test/test_segment_tree.h
+        test/tree_test.h
 )
